@@ -1,0 +1,8 @@
+version: 2
+
+sources:
+  - name: carsharing_raw                  # Логическое имя источника для dbt
+    schema: carsharing_raw                      # DB в Clickhouse
+    tables:
+      - name: car_telemetry # Точное имя таблицы
+        description: "Сырые потоковые данные телеметрии автомобилей каршеринга, поступающие из Python-генератора." 
