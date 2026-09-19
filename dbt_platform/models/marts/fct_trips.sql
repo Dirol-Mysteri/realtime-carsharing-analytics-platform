@@ -38,9 +38,13 @@ SELECT
     masked_user_id,
     trip_started_at,
     trip_ended_at,
+
+    -- Counting trip duration
     dateDiff('minute', trip_started_at, trip_ended_at) AS trip_duration_minutes,
+    
     max_speed,
     round(avg_speed, 2) AS avg_speed,
+    
     fuel_start,
     fuel_end,
     IF(fuel_start > fuel_end, fuel_start - fuel_end, 0) AS fuel_consumed_percent
