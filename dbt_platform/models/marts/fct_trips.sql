@@ -2,7 +2,7 @@
     materialized = 'table',
     ENGINE = 'MergeTree()',
     order_by = '(trip_started_at, car_id)'
-)} } WITH telemetry_events AS (
+)}} WITH telemetry_events AS (
     SELECT
         *
     FROM
