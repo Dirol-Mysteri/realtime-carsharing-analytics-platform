@@ -1,12 +1,19 @@
 {{ config(
-    materialized = 'table',
+    materialized = 'incremental',
     ENGINE = 'MergeTree()',
-    order_by = '(trip_started_at, car_id)'
-)}} WITH telemetry_events AS (
+    order_by = '(trip_started_at, car_id)',
+    unique_key = 'trip_id'
+)}} 
+
+WITH telemetry_events AS (
     SELECT
         *
     FROM
         {{ ref('stg_car_telemetry') }}
+
+        {% if is_incremental() %}
+            where telemetry > (select max(trip_ended_at) - interval 2 day from {{ this }})
+        {% endif %}
 ),
 -- Группируем данные по каждой поездке чтобы собрать агрегаты
 trip_aggregates AS (
