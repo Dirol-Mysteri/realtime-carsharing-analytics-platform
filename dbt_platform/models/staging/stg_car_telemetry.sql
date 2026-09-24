@@ -11,7 +11,7 @@ renamed_and_cleaned AS (
     car_id,
     {{ mask_pii('user_id') }} AS masked_user_id,
     trip_id,
-    timestamp AS telemetry,
+    timestamp AS telemetry_at,
     toDate(timestamp) AS telemetry_date,
     latitude,
     longitude,

@@ -12,7 +12,7 @@ client = clickhouse_connect.get_client(
     port=8123,
     username=config.CH_USER,
     password=config.CH_PASS,
-    database=config.CH_DB
+    database='carsharing_raw'
 )
 
 # --- SENIOR APPROACH: Автоматическое создание RAW-таблицы при старте ---
