@@ -1,18 +1,26 @@
-{{ config(
-    materialized = 'incremental',
-    ENGINE = 'MergeTree()',
-    order_by = '(trip_started_at, car_id)',
-    unique_key = 'trip_id'
-)}} 
+{{
+  config(
+    materialized='incremental',
+    engine='ReplacingMergeTree(trip_ended_at)',
+    order_by='(trip_id)',
+    unique_key='trip_id',
+    incremental_strategy='append'
+  )
+}}
+
 
 WITH telemetry_events AS (
     SELECT
-        *
+        *   
     FROM
         {{ ref('stg_car_telemetry') }}
 
         {% if is_incremental() %}
-            where telemetry > (select max(trip_ended_at) - interval 2 day from {{ this }})
+            where trip_id in (
+                select distinct trip_id
+                from  {{ ref('stg_car_telemetry') }}
+                where telemetry_at > (select max(trip_ended_at) from {{ this }})
+            )
         {% endif %}
 ),
 -- Группируем данные по каждой поездке чтобы собрать агрегаты
@@ -22,8 +30,8 @@ trip_aggregates AS (
         car_id,
         masked_user_id,
         -- Время начала и конца поездки
-        min(telemetry) AS trip_started_at,
-        max(telemetry) AS trip_ended_at,
+        min(telemetry_at) AS trip_started_at,
+        max(telemetry_at) AS trip_ended_at,
         -- Метрики поездки
         max(speed) AS max_speed,
         avg(speed) AS avg_speed,
@@ -59,3 +67,4 @@ FROM
     trip_aggregates
 WHERE
     trip_ended_at > trip_started_at
+    and trip_id != '00000000-0000-0000-0000-000000000000'
