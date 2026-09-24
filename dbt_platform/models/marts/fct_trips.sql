@@ -36,8 +36,8 @@ trip_aggregates AS (
         max(speed) AS max_speed,
         avg(speed) AS avg_speed,
         -- Уровень топлива на старте и финише
-        argMin(fuel_level_percent, telemetry) AS fuel_start,
-        argMax(fuel_level_percent, telemetry) AS fuel_end
+        argMin(fuel_level_percent, telemetry_at) AS fuel_start,
+        argMax(fuel_level_percent, telemetry_at) AS fuel_end
     FROM
         telemetry_events
     WHERE
