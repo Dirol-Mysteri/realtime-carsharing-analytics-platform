@@ -1,0 +1,41 @@
+name: Data Platform CI Control
+
+# Пайплайн триггерится при любом push или Pull Request в ветку main
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  code-quality-and-linter:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Шаг 1: Скачиваем код репозитория на виртуальную машину GitHub
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    # Шаг 2: Разворачиваем Python окружение
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        cache: 'pip' # Автоматически кэширует зависимости для ускорения последующих запусков
+
+    # Шаг 3: Устанавливаем линтеры и зависимости dbt
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install sqlfluff sqlfluff-extractor dbt-core dbt-clickhouse
+
+    # Шаг 4: Инициализируем dbt зависимости (пакет dbt_utils)
+    - name: Install dbt packages
+      run: |
+        cd dbt_platform
+        dbt deps
+
+    # Проверяем все файлы в папке models. Если код оформлен грязно — пайплайн упадет.
+    - name: Lint SQL via SQLFluff
+      run: |
+        sqlfluff lint dbt_platform/models --dialect clickhouse
