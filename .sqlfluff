@@ -1,15 +1,11 @@
 [sqlfluff]
 dialect = clickhouse
-# МЕНЯЕМ НА JINJA, чтобы линтер не ломился в базу данных ClickHouse
 templater = jinja
 max_line_length = 120
 
 [sqlfluff:indentation]
 tab_space_size = 4
 
-# Прописываем фейковый контекст для джинжи, чтобы она не ругалась на макросы dbt
-[sqlfluff:templater:jinja:context]
-ref = lambda x: x
-source = lambda x, y: y
-is_incremental = lambda: False
-mask_pii = lambda x: x
+[sqlfluff:templater:jinja]
+# Приказываем линтеру игнорировать макросы dbt, которые он не знает
+ignore_unknown_variables = True
