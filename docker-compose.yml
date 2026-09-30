@@ -18,6 +18,36 @@ services:
       nofile:
         soft: 262144
         hard: 262144
+    networks:
+      - carsharing_network
+    healthcheck:
+      # Проверяем, что ClickHouse готов принимать подключения
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8123/ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # Генератор потоковых данных на Python
+  data-generator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: carsharing_generator
+    restart: always
+    # Подгружаем переменные из .env файла
+    env_file:
+      - .env
+    environment:
+      - CLICKHOUSE_HOST=clickhouse
+    depends_on:
+      clickhouse:
+        condition: service_healthy # Контейнер генератора запустится ТОЛЬКО после успешного хелсчека ClickHouse
+    networks:
+      - carsharing_network
 
 volumes:
   ch_data:
+
+networks:
+  carsharing_network:
+    driver: bridge

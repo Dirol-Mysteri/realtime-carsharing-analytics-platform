@@ -8,7 +8,7 @@ import config
 
 # Подключение к нашему ClickHouse в Docker
 client = clickhouse_connect.get_client(
-    host='localhost',
+    host=config.CH_HOST,
     port=8123,
     username=config.CH_USER,
     password=config.CH_PASS,
