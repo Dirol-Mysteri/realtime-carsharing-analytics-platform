@@ -31,6 +31,9 @@ jobs:
         cd dbt_platform
         dbt deps
 
+    - name: Prepare dbt profile for linter
+      run: cp .github/profiles.yml ./profiles.yml
+
     - name: Lint SQL via SQLFluff
       run: |
         sqlfluff lint dbt_platform/models --dialect clickhouse

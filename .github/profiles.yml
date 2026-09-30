@@ -1,0 +1,11 @@
+dbt_platform:
+  outputs:
+    dev:
+      type: clickhouse
+      host: localhost
+      port: 8123
+      user: fake_user_for_ci
+      password: fake_password_for_ci
+      schema: fake_schema
+      secure: False
+  target: dev
