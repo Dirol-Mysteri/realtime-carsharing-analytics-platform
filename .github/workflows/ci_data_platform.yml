@@ -20,13 +20,11 @@ jobs:
         python-version: '3.11'
         cache: 'pip'
 
-    # Нам нужен ТОЛЬКО сам sqlfluff. Никаких адаптеров кликхауса и dbt-core!
     - name: Install SQLFluff
       run: |
         python -m pip install --upgrade pip
         pip install sqlfluff
 
-    # Просто запускаем линтинг текста. Никакой базы данных, никаких сетевых запросов!
     - name: Lint SQL via SQLFluff
       run: |
         sqlfluff lint dbt_platform/models --dialect clickhouse

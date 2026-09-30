@@ -7,5 +7,5 @@ max_line_length = 120
 tab_space_size = 4
 
 [sqlfluff:templater:jinja]
-# Приказываем линтеру игнорировать макросы dbt, которые он не знает
-ignore_unknown_variables = True
+# Указываем линтеру прочитать наши фейковые макросы перед проверкой кода
+macros_path = .github/sqlfluff_macros
