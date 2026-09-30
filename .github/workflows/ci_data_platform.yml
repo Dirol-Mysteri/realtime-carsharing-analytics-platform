@@ -34,6 +34,11 @@ jobs:
     - name: Prepare dbt profile for linter
       run: cp .github/profiles.yml dbt_platform/profiles.yml
 
+    - name: Compile dbt manifest offline
+      run: |
+        cd dbt_platform
+        dbt compile --profiles-dir . --empty
+
     - name: Lint SQL via SQLFluff
       run: |
         sqlfluff lint dbt_platform/models --dialect clickhouse
