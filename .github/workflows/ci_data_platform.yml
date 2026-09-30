@@ -32,7 +32,7 @@ jobs:
         dbt deps
 
     - name: Prepare dbt profile for linter
-      run: cp .github/profiles.yml ./profiles.yml
+      run: cp .github/profiles.yml dbt_platform/profiles.yml
 
     - name: Lint SQL via SQLFluff
       run: |
