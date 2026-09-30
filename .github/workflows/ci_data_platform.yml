@@ -20,25 +20,13 @@ jobs:
         python-version: '3.11'
         cache: 'pip'
 
-    - name: Install dependencies
+    # Нам нужен ТОЛЬКО сам sqlfluff. Никаких адаптеров кликхауса и dbt-core!
+    - name: Install SQLFluff
       run: |
         python -m pip install --upgrade pip
-        # ДОБАВИЛИ ОБЯЗАТЕЛЬНЫЙ ПЛАГИН ДЛЯ РАБОТЫ С DBT
-        pip install sqlfluff sqlfluff-templater-dbt dbt-core dbt-clickhouse
+        pip install sqlfluff
 
-    - name: Install dbt packages
-      run: |
-        cd dbt_platform
-        dbt deps
-
-    - name: Prepare dbt profile for linter
-      run: cp .github/profiles.yml dbt_platform/profiles.yml
-
-    - name: Compile dbt manifest offline
-      run: |
-        cd dbt_platform
-        dbt compile --profiles-dir . --empty
-
+    # Просто запускаем линтинг текста. Никакой базы данных, никаких сетевых запросов!
     - name: Lint SQL via SQLFluff
       run: |
         sqlfluff lint dbt_platform/models --dialect clickhouse

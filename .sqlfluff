@@ -1,15 +1,15 @@
 [sqlfluff]
 dialect = clickhouse
-templater = dbt
+# МЕНЯЕМ НА JINJA, чтобы линтер не ломился в базу данных ClickHouse
+templater = jinja
 max_line_length = 120
-
-[sqlfluff:templater:dbt]
-project_dir = ./dbt_platform
-profiles_dir = ./dbt_platform
 
 [sqlfluff:indentation]
 tab_space_size = 4
 
-# Отключаем слишком строгие правила, которые часто конфликтуют с джинжой
-[sqlfluff:rules]
-allow_scalar = True
+# Прописываем фейковый контекст для джинжи, чтобы она не ругалась на макросы dbt
+[sqlfluff:templater:jinja:context]
+ref = lambda x: x
+source = lambda x, y: y
+is_incremental = lambda: False
+mask_pii = lambda x: x
